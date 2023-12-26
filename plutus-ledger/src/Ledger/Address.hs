@@ -58,12 +58,6 @@ type CardanoAddress = C.AddressInEra C.BabbageEra
 
 instance ToJSONKey (C.AddressInEra C.BabbageEra)
 instance FromJSONKey (C.AddressInEra C.BabbageEra)
-instance PlutusTx.ToData (C.AddressInEra C.BabbageEra)
-instance PlutusTx.FromData (C.AddressInEra C.BabbageEra)
-instance PlutusTx.UnsafeFromData (C.AddressInEra C.BabbageEra)
-
-
-
 
 cardanoAddressCredential :: C.AddressInEra era -> Credential
 cardanoAddressCredential (C.AddressInEra C.ByronAddressInAnyEra (C.ByronAddress address))

@@ -482,7 +482,7 @@ runInitialiseWithUnbalanced ::
     -- ^ The initial state
     -> Value
     -- ^ The value locked by the contract at the beginning
-    -> Contract w schema e state
+    -> Contract w schema e ()
 runInitialiseWithUnbalanced customLookups customConstraints StateMachineClient{scInstance} initialState initialValue =
     mapError (review _SMContractError) $ do
       utxo <- ownUtxos
@@ -504,8 +504,6 @@ runInitialiseWithUnbalanced customLookups customConstraints StateMachineClient{s
       utx <- mkTxConstraints lookups constraints
       logInfo @String $ "runInitialiseWithUnbalanced " <> show utx
       adjustUnbalancedTx utx >>= yieldUnbalancedTx
-      pure initialState
-
 
 
 

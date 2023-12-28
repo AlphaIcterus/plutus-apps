@@ -76,8 +76,8 @@ import Ledger.Typed.Scripts qualified as Scripts
 import Plutus.ChainIndex (ChainIndexTx (_citxInputs, _citxRedeemers))
 import Plutus.Contract (AsContractError (_ContractError), Contract, ContractError, Promise, adjustUnbalancedTx,
                         awaitPromise, isSlot, isTime, logInfo, logWarn, mapError, never, ownFirstPaymentPubKeyHash,
-                        ownUtxos, promiseBind, select, submitTxConfirmed, submitUnbalancedTx, utxoIsProduced,
-                        utxoIsSpent, utxosAt, utxosTxOutTxFromTx)
+                        ownUtxos, promiseBind, select, submitTxConfirmed, utxoIsProduced, utxoIsSpent, utxosAt,
+                        utxosTxOutTxFromTx, yieldUnbalancedTx)
 import Plutus.Contract.Request (getUnspentOutput, mkTxConstraints)
 import Plutus.Contract.StateMachine.MintingPolarity (MintingPolarity (Burn, Mint))
 import Plutus.Contract.StateMachine.OnChain (State (State, stateData, stateValue),
@@ -502,10 +502,10 @@ runInitialiseWithUnbalanced customLookups customConstraints StateMachineClient{s
               <> Constraints.unspentOutputs utxo
               <> customLookups
       utx <- mkTxConstraints lookups constraints
-      adjustedUtx <- adjustUnbalancedTx utx
-      txID <- submitUnbalancedTx adjustedUtx
-      logInfo @String $ "runInitialiseWithUnbalanced " <> show txID
+      logInfo @String $ "runInitialiseWithUnbalanced " <> show utx
+      adjustUnbalancedTx utx >>= yieldUnbalancedTx
       pure initialState
+
 
 
 

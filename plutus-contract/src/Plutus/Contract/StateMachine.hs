@@ -66,8 +66,8 @@ import Data.Text qualified as Text
 import Data.Void (Void, absurd)
 import GHC.Generics (Generic)
 import Ledger (POSIXTime, Slot, TxOutRef)
-import Ledger.Address (CardanoAddress)
 import Ledger qualified
+import Ledger.Address (CardanoAddress)
 import Ledger.Tx qualified as Tx
 import Ledger.Tx.Constraints (ScriptLookups, TxConstraints (txOwnInputs, txOwnOutputs), UnbalancedTx,
                               mustMintValueWithRedeemer, mustPayToTheScriptWithInlineDatum,
@@ -76,9 +76,9 @@ import Ledger.Tx.Constraints.OffChain qualified as Constraints
 import Ledger.Typed.Scripts qualified as Scripts
 import Plutus.ChainIndex (ChainIndexTx (_citxInputs, _citxRedeemers))
 import Plutus.Contract (AsContractError (_ContractError), Contract, ContractError, Promise, adjustUnbalancedTx,
-                        awaitPromise, isSlot, isTime, logWarn, logInfo,mapError, never, ownFirstPaymentPubKeyHash, ownUtxos,
-                        promiseBind, select, yieldUnbalancedTx, submitTxConfirmed, utxoIsProduced, utxoIsSpent, utxosAt,
-                        utxosTxOutTxFromTx)
+                        awaitPromise, isSlot, isTime, logInfo, logWarn, mapError, never, ownFirstPaymentPubKeyHash,
+                        ownUtxos, promiseBind, select, submitTxConfirmed, utxoIsProduced, utxoIsSpent, utxosAt,
+                        utxosTxOutTxFromTx, yieldUnbalancedTx)
 import Plutus.Contract.Request (getUnspentOutput, mkTxConstraints)
 import Plutus.Contract.StateMachine.MintingPolarity (MintingPolarity (Burn, Mint))
 import Plutus.Contract.StateMachine.OnChain (State (State, stateData, stateValue),
@@ -483,12 +483,10 @@ runInitialiseWithUnbalanced ::
     -- ^ The initial state
     -> Value
     -- ^ The value locked by the contract at the beginning
-    -> CardanoAddress
-    -- ^ Cardano address
     -> Contract w schema e state
-runInitialiseWithUnbalanced customLookups customConstraints StateMachineClient{scInstance} initialState initialValue address =
+runInitialiseWithUnbalanced customLookups customConstraints StateMachineClient{scInstance} initialState initialValue =
     mapError (review _SMContractError) $ do
-      utxo <- utxosAt address
+      utxo <- ownUtxos
       let StateMachineInstance{stateMachine, typedValidator} = scInstance
           constraints =
               mustPayToTheScriptWithInlineDatum

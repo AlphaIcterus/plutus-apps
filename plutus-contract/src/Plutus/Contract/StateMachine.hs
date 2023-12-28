@@ -67,7 +67,6 @@ import Data.Void (Void, absurd)
 import GHC.Generics (Generic)
 import Ledger (POSIXTime, Slot, TxOutRef)
 import Ledger qualified
-import Ledger.Address (CardanoAddress)
 import Ledger.Tx qualified as Tx
 import Ledger.Tx.Constraints (ScriptLookups, TxConstraints (txOwnInputs, txOwnOutputs), UnbalancedTx,
                               mustMintValueWithRedeemer, mustPayToTheScriptWithInlineDatum,
